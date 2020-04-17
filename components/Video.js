@@ -16,6 +16,7 @@ const {
 
 const config = {                            //Setting config of the app
   appid: 'ENTER APP ID HERE',               //Enter the App ID generated from the Agora Website
+  agoraToken: 'ENTER TOKEN HERE',           ////Enter the App TOKEN generated from the Agora Website
   channelProfile: 0,                        //Set channel profile as 0 for RTC
   videoEncoderConfig: {                     //Set Video feed encoder settings
     width: 720,
@@ -36,6 +37,7 @@ class Video extends Component {
       uid: Math.floor(Math.random() * 100),              //Generate a UID for local user
       appid: config.appid,
       channelName: 'channel-x',                        //Channel Name for the current session
+      agoraToken: config.agoraToken,
       joinSucceed: false,                                //State variable for storing success
     };
     if (Platform.OS === 'android') {                    //Request required permissions from Android
@@ -59,6 +61,7 @@ class Video extends Component {
       });
     });
     RtcEngine.on('joinChannelSuccess', (data) => {                   //If Local user joins RTC channel
+      console.log("joinChannelSuccess called");
       RtcEngine.startPreview();                                      //Start RTC preview
       this.setState({
         joinSucceed: true,                                           //Set state variable to true
@@ -71,7 +74,12 @@ class Video extends Component {
   * @description Function to start the call
   */
   startCall = () => {
-    RtcEngine.joinChannel(this.state.channelName, this.state.uid);  //Join Channel
+    if (this.state.agoraToken == "ENTER TOKEN HERE" || this.state.agoraToken == "") {
+      console.log("agoraToken: " + this.state.agoraToken);
+      RtcEngine.joinChannel(this.state.channelName, this.state.uid);  //Join Channel
+    } else{
+      RtcEngine.joinChannel(this.state.channelName, this.state.uid, this.state.agoraToken);  //Join Channel
+    }
     RtcEngine.enableAudio();                                        //Enable the audio
   }
   /**
